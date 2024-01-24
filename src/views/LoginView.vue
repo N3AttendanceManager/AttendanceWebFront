@@ -113,6 +113,9 @@ export default {
         this.name === this.correctName &&
         this.password === this.correctPassword
       ) {
+        // Vuexストアにユーザー名をセット
+        this.$store.commit("setUsername", this.name);
+
         // ログイン成功時にTopViewにリダイレクトし、ユーザーIDを渡す
         this.$router.push({ name: "top", query: { userId: this.name } });
       } else {

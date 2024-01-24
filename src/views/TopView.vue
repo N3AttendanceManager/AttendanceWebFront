@@ -4,7 +4,7 @@
     style="height: 100vh; background-color: #252b30"
   >
     <div class="header-container mb-5">
-      <h1 class="text-white" v-if="userId">先生名: {{ userId }}</h1>
+      <h1 class="text-white" v-if="username">先生名: {{ username }}</h1>
     </div>
     <!-- ボタンを縦方向の中央に配置 -->
     <div class="button-container d-flex flex-wrap justify-content-center">
@@ -39,17 +39,10 @@
 <script>
 export default {
   name: "TopView",
-  data() {
-    return {
-      userId: null,
-    };
-  },
-  watch: {
-    $route: {
-      immediate: true,
-      handler(to) {
-        this.userId = to.query.userId;
-      },
+  computed: {
+    // Vuex ストアからユーザー名を取得
+    username() {
+      return this.$store.getters.getUsername;
     },
   },
   methods: {
@@ -63,8 +56,10 @@ export default {
       this.$router.push({ name: "student" });
     },
     logout() {
-      // ログアウト処理をここに記述
-      // 例: ログインページにリダイレクト
+      // ログアウト処理
+      // Vuex ストアからユーザー名を削除
+      this.$store.commit("setUsername", "");
+      // ログインページにリダイレクト
       this.$router.push({ name: "login" });
     },
   },
