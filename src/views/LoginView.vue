@@ -29,6 +29,9 @@
           transform: translate(-50%, -50%);
         "
       >
+        <div class="text-center">
+          <p class="text-danger" v-if="errorMessage">{{ errorMessage }}</p>
+        </div>
         <!--ID入力テキストボックス-->
         <div class="mb-3">
           <p class="text-left" style="color: white">ID</p>
@@ -104,6 +107,7 @@ export default {
       password: "",
       correctName: "Taguchi", // 仮のユーザー名
       correctPassword: "ryotaro", // 仮のパスワード
+      errorMessage: "",
     };
   },
   methods: {
@@ -120,9 +124,16 @@ export default {
         this.$router.push({ name: "top", query: { userId: this.name } });
       } else {
         // ログイン失敗時の処理
-        console.log("ログイン情報が正しくありません");
+        this.errorMessage = "ログインに失敗しました。";
       }
     },
   },
 };
 </script>
+
+<style>
+.text-danger {
+  font-size: 20px;
+  font-weight: bold;
+}
+</style>
