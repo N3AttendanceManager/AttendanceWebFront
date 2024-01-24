@@ -1,12 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+
 
 const routes = [
-  {
-    path: "/",
-    name: "home",
-    component: HomeView,
-  },
   {
     path: "/about",
     name: "about",
@@ -20,7 +15,42 @@ const routes = [
     // ログイン画面
     path: "/login",
     name: "login",
-    component: () => import("../views/LoginView.vue"),
+    component: () => import("../views/LoginView.vue"),// ログイン
+  },
+  {
+    path: "/top",
+    name: "top",
+    component: () => import("../views/TopView.vue"), // トップページ
+  },
+  {
+    path: "/subject",
+    name: "subject",
+    component: () => import("../views/SubjectView.vue"), // 科目一覧
+  },
+  {
+    path: "/choose",
+    name: "choose",
+    component: () => import("../views/ChooseSubject.vue"), // 科目選択
+  },
+  {
+    path: "/detail",
+    name: "detail",
+    component: () => import("../views/SubjectDetail.vue"), // 授業詳細
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: () => import("../views/RegisterSubject.vue"), // 科目登録
+  },
+  {
+    path: "/student",
+    name: "student",
+    component: () => import("../views/StudentView.vue"), // 生徒一覧
+  },
+  {
+    path: "/test",
+    name: "test",
+    component: () => import("../views/TestView.vue"), // 生徒一覧
   },
 ];
 
