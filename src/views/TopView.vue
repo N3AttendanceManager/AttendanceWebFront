@@ -20,7 +20,7 @@
       </div>
       <div class="col-6 d-flex justify-content-center mb-1">
         <button class="btn btn-info your-button-class" @click="register">
-          科目登録
+          授業登録
         </button>
       </div>
       <div class="col-6 d-flex justify-content-center mb-1">

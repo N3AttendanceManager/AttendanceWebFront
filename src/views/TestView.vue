@@ -1,83 +1,111 @@
 <template>
-  <div
-    class="top-view d-flex flex-column justify-content-center align-items-center"
-    style="height: 100vh; background-color: #252b30"
-  >
-    <div class="header-container mb-5">
-      <h1 class="text-white" v-if="userId">先生名: {{ userId }}</h1>
+  <div class="subject-v" style="height: 130vh; background-color: #252b30">
+    <button class="triangle-button" @click="triangleButtonClicked"></button>
+    <h1 style="color: white; font-size: 40px">科目一覧画面</h1>
+    <div v-if="departments && departments.length">
+      <h2 v-for="department in departments" :key="department.id">
+        {{ department.name }}
+        <div>
+          <li
+            v-for="subject in subjects.filter(
+              (subject) => subject.departmentId === department.id
+            )"
+            :key="subject.id"
+            @click="redirectToChooseSubject(subject.id)"
+            class="clickable-text"
+            style="cursor: pointer; color: white; font-size: 30px"
+          >
+            {{ subject.name }}
+          </li>
+        </div>
+      </h2>
     </div>
-
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>First</th>
-          <th>Last</th>
-          <th>Handle</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in apiData" :key="index">
-          <td>{{ index + 1 }}</td>
-          <td>{{ item.first }}</td>
-          <td>{{ item.last }}</td>
-          <td>{{ item.handle }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="logout-container">
-      <p @click="logout" class="clickable-text logout-text">Logout</p>
-    </div>
+    <p v-else-if="!departments.length">学科が見つかりません。</p>
+    <p v-else>学科を読み込み中...</p>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  name: "TopView",
+  name: "SubjectView",
   data() {
     return {
-      userId: null,
-      apiData: [], // APIから取得したデータを格納する配列
+      departments: [],
+      subjects: [], // 科目一覧のための配列を追加
     };
   },
-  mounted() {
-    this.fetchData();
+  created() {
+    this.fetchDepartments();
+    this.fetchSubjects(); // 科目一覧も取得
   },
   methods: {
-    async fetchData() {
+    async fetchDepartments() {
       try {
-        const response = await fetch("your-api-url"); // APIのURLを指定
-        const data = await response.json();
-        this.apiData = data;
+        const response = await axios.get(
+          "https://n3a.miyayu.xyz/api/department"
+        );
+        this.departments = response.data;
       } catch (error) {
-        console.error("APIからデータを取得中にエラーが発生しました:", error);
+        console.error("学科一覧の取得に失敗しました:", error);
       }
     },
-    logout() {
-      this.$router.push({ name: "login" });
+    async fetchSubjects() {
+      try {
+        const response = await axios.get("https://n3a.miyayu.xyz/api/subject");
+        this.subjects = response.data.subjects; // 科目のデータを格納
+      } catch (error) {
+        console.error("科目一覧の取得に失敗しました:", error);
+      }
     },
-    // 他のメソッド...
+    triangleButtonClicked() {
+      this.$router.push("/top");
+    },
+    redirectToChooseSubject(subjectId) {
+      this.$router.push({ path: "/choose", query: { subjectId } });
+    },
   },
 };
 </script>
 
 <style>
-/* テーブルヘッダーのスタイル */
-.table thead th {
-  background-color: #4e777c; /* ヘッダーの背景色 */
-  color: white; /* ヘッダーの文字色 */
+.triangle-button {
+  width: 0;
+  height: 0;
+  border-top: 30px solid transparent;
+  border-bottom: 30px solid transparent;
+  border-right: 60px solid #bff7ff;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative; /* 相対位置指定 */
+  top: 30px; /* 上から20pxの位置 */
+  right: -30px; /* 右から-20pxの位置（左に移動） */
+}
+.subject-v h1 {
+  color: white;
+  font-size: 80px !important;
+  position: relative; /* 相対位置指定 */
+  top: 20px; /* 上方向への調整 */
+  right: -120px;
+}
+.subject-v h2 {
+  color: white;
+  font-size: 60px !important;
+  position: relative;
+  top: 40px;
+  right: -140px;
+  /* text-decoration: underline; 下線を追加 */
 }
 
-/* テーブルボディのスタイル */
-.table tbody td {
-  background-color: #82b7be; /* ボディの背景色 */
-  color: black; /* ボディの文字色 */
-}
-
-/* テーブルのボーダーのスタイル */
-.table th,
-.table td {
-  border-color: #bff7ff; /* ボーダーの色 */
+.clickable-text {
+  margin-top: 10px;
+  cursor: pointer;
+  color: white;
+  font-size: 40px !important;
+  position: relative;
+  top: 0;
+  right: -20px;
+  font-weight: bold;
 }
 </style>

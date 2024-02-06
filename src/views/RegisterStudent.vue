@@ -1,7 +1,7 @@
 <template>
   <div class="subject-view" style="height: 100vh; background-color: #252b30">
     <button class="triangle-button" @click="triangleButtonClicked"></button>
-    <h1 style="color: white; font-size: 40px">授業登録画面</h1>
+    <h1 style="color: white; font-size: 40px">生徒登録画面</h1>
     <form
       class="text-center"
       style="
@@ -12,14 +12,13 @@
       "
       @submit.prevent="submit"
     >
-      <!--科目ID入力テキストボックス-->
       <div class="mb-3">
-        <p class="text-left" style="color: white">科目ID</p>
+        <label for="name" class="text-left" style="color: white">生徒名</label>
         <input
-          type="number"
+          id="name"
+          type="text"
           class="form-control form-control-lg mx-auto"
-          id="subjectId"
-          v-model="subjectId"
+          v-model="name"
           style="
             background-color: #4a5660;
             width: 400px;
@@ -30,14 +29,14 @@
           required
         />
       </div>
-      <!--授業開始日時入力テキストボックス-->
-      <div class="mb-3">
-        <p class="text-left" style="color: white">授業開始日時</p>
+      <div class="mb-3 position-relative">
+        <label for="studentId" class="text-left" style="color: white"
+          >学籍番号</label
+        >
         <input
-          type="datetime-local"
+          id="studentId"
           class="form-control form-control-lg mx-auto"
-          id="startOn"
-          v-model="startOn"
+          v-model="studentId"
           style="
             background-color: #4a5660;
             width: 400px;
@@ -48,14 +47,15 @@
           required
         />
       </div>
-      <!--授業終了日時入力テキストボックス-->
       <div class="mb-3">
-        <p class="text-left" style="color: white">授業終了日時</p>
+        <label for="departmentId" class="text-left" style="color: white"
+          >学科ID</label
+        >
         <input
-          type="datetime-local"
+          id="departmentId"
+          type="text"
           class="form-control form-control-lg mx-auto"
-          id="endOn"
-          v-model="endOn"
+          v-model="departmentId"
           style="
             background-color: #4a5660;
             width: 400px;
@@ -67,7 +67,7 @@
         />
       </div>
       <button
-        type="button"
+        type="submit"
         class="btn btn-info"
         style="
           background-color: #82b7be;
@@ -79,7 +79,6 @@
           padding: 0;
           border-radius: 15px;
         "
-        @click="submit"
       >
         登録
       </button>
@@ -92,36 +91,36 @@ export default {
   name: "SubjectView",
   data() {
     return {
-      subjectId: null,
-      startOn: "",
-      endOn: "",
+      name: "",
+      studentId: "",
+      departmentId: "",
     };
   },
   methods: {
     triangleButtonClicked() {
-      this.$router.push("/top");
+      this.$router.push("/student");
     },
     async submit() {
       try {
         // フォームの入力データを検証
-        if (this.subjectId === null || !this.startOn || !this.endOn) {
+        if (!this.name || !this.studentId || !this.departmentId) {
           alert("全てのフィールドを入力してください。");
           return;
         }
 
         const response = await this.$axios.post(
-          "https://n3a.miyayu.xyz/api/class",
+          "https://n3a.miyayu.xyz/api/student",
           {
-            subjectId: this.subjectId,
-            startOn: this.startOn,
-            endOn: this.endOn,
+            studentId: this.studentId,
+            name: this.name,
+            departmentId: parseInt(this.departmentId, 10),
           }
         );
-        alert("授業の登録に成功しました！");
+        alert("登録成功！");
         console.log(response.data);
         // 登録成功後の処理
       } catch (error) {
-        alert("授業の登録に失敗しました。");
+        alert("登録に失敗しました。");
         console.error("登録エラー", error);
         // エラー処理
       }
@@ -130,8 +129,7 @@ export default {
 };
 </script>
 
-<style>
-/* 左向きの三角形ボタンのスタイル */
+<style scoped>
 .triangle-button {
   width: 0;
   height: 0;
@@ -140,15 +138,8 @@ export default {
   border-right: 60px solid #bff7ff;
   background-color: transparent;
   cursor: pointer;
-  position: relative; /* 相対位置指定 */
-  top: 30px; /* 上から20pxの位置 */
-  right: -30px; /* 右から-20pxの位置（左に移動） */
-}
-.subject-view h1 {
-  color: white;
-  font-size: 80px !important;
-  position: relative; /* 相対位置指定 */
-  top: 20px; /* 上方向への調整 */
-  right: -120px;
+  position: relative;
+  top: 30px;
+  right: -30px;
 }
 </style>

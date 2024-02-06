@@ -52,6 +52,11 @@ const routes = [
     name: "test",
     component: () => import("../views/TestView.vue"), // 生徒一覧
   },
+  {
+    path: "/registerStudent",
+    name: "registerStudent",
+    component: () => import("../views/RegisterStudent.vue"), // 生徒登録
+  },
 ];
 
 const router = createRouter({

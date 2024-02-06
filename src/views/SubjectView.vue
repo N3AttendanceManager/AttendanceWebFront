@@ -1,37 +1,75 @@
 <template>
-  <div class="subject-view" style="height: 100vh; background-color: #252b30">
+  <div class="subject-v" style="height: 130vh; background-color: #252b30">
     <button class="triangle-button" @click="triangleButtonClicked"></button>
     <h1 style="color: white; font-size: 40px">科目一覧画面</h1>
-
-    <h2>ITスペシャリスト科</h2>
-
-    <p
-      @click="redirectToChooseSubject"
-      class="clickable-text"
-      style="cursor: pointer; color: white; font-size: 30px"
-    >
-      ・ 基本情報対策講座
-    </p>
+    <div v-if="departments && departments.length">
+      <h2 v-for="department in departments" :key="department.id">
+        {{ department.name }}
+        <div>
+          <li
+            v-for="subject in subjects.filter(
+              (subject) => subject.departmentId === department.id
+            )"
+            :key="subject.id"
+            @click="redirectToChooseSubject(subject.id)"
+            class="clickable-text"
+            style="cursor: pointer; color: white; font-size: 30px"
+          >
+            {{ subject.name }}
+          </li>
+        </div>
+      </h2>
+    </div>
+    <p v-else-if="!departments.length">学科が見つかりません。</p>
+    <p v-else>学科を読み込み中...</p>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "SubjectView",
+  data() {
+    return {
+      departments: [],
+      subjects: [], // 科目一覧のための配列を追加
+    };
+  },
+  created() {
+    this.fetchDepartments();
+    this.fetchSubjects(); // 科目一覧も取得
+  },
   methods: {
+    async fetchDepartments() {
+      try {
+        const response = await axios.get(
+          "https://n3a.miyayu.xyz/api/department"
+        );
+        this.departments = response.data;
+      } catch (error) {
+        console.error("学科一覧の取得に失敗しました:", error);
+      }
+    },
+    async fetchSubjects() {
+      try {
+        const response = await axios.get("https://n3a.miyayu.xyz/api/subject");
+        this.subjects = response.data.subjects; // 科目のデータを格納
+      } catch (error) {
+        console.error("科目一覧の取得に失敗しました:", error);
+      }
+    },
     triangleButtonClicked() {
       this.$router.push("/top");
     },
-    redirectToChooseSubject() {
-      // ChooseSubject.vue にリダイレクト
-      this.$router.push("/choose");
+    redirectToChooseSubject(subjectId) {
+      this.$router.push({ path: "/choose", query: { subjectId } });
     },
   },
 };
 </script>
 
 <style>
-/* 左向きの三角形ボタンのスタイル */
 .triangle-button {
   width: 0;
   height: 0;
@@ -44,30 +82,30 @@ export default {
   top: 30px; /* 上から20pxの位置 */
   right: -30px; /* 右から-20pxの位置（左に移動） */
 }
-.subject-view h1 {
+.subject-v h1 {
   color: white;
   font-size: 80px !important;
   position: relative; /* 相対位置指定 */
   top: 20px; /* 上方向への調整 */
   right: -120px;
 }
-.subject-view h2 {
+.subject-v h2 {
   color: white;
-  font-size: 50px !important;
-  position: relative; /* 相対位置指定 */
-  top: 40px; /* 上方向への調整 */
+  font-size: 60px !important;
+  position: relative;
+  top: 40px;
   right: -140px;
-  text-decoration: underline;
-  text-decoration-color: #82b7be; /* 下線の色 */
+  /* text-decoration: underline; 下線を追加 */
 }
+
 .clickable-text {
-  margin-top: 40px;
+  margin-top: 10px;
   cursor: pointer;
   color: white;
   font-size: 40px !important;
-  position: relative; /* 相対位置指定 */
-  top: 30px; /* 上方向への調整 */
-  right: -140px; /* 右方向への調整 */
+  position: relative;
+  top: 0;
+  right: -20px;
   font-weight: bold;
 }
 </style>
